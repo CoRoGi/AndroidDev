@@ -1,0 +1,63 @@
+[versions]
+# Android
+android = "8.5.0"
+# Activity KTX
+activityKtx = "1.9.1"
+# Compose
+composeBom = "2024.06.00"
+activityCompose = "1.9.0"
+lifeCycleVersion = "2.8.6"
+composeRuntime = "1.6.8"
+# Compile SDK
+compileSdk = "34"
+# Dagger Hilt
+hilt = "2.51.1"
+hiltNavigation = "1.2.0"
+# Kotlin Android
+kotlin = "2.0.0"
+# Min & Target SDK
+minSdk = "21"
+targetSdk = "33"
+khexgridVersion = "0.1.0"
+graphicsShapesAndroid = "1.0.1"
+navigationCommonKtx = "2.8.4"
+
+[plugins]
+# Android
+android-application = { id = "com.android.application", version.ref = "android" }
+android-library = { id = "com.android.library", version.ref = "android" }
+# Compose
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+# Kotlin
+org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+# Dagger Hilt
+dagger_hilt_plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+
+[libraries]
+# AndroidX Activity
+activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+# Compose Bom
+# https://developer.android.com/develop/ui/compose/setup#kotlin_1
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+# Compose Runtime
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "composeRuntime" }
+# Compose Libs
+material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive" }
+
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifeCycleVersion" }
+# Dagger Hilt
+dagger_hilt_android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+dagger_hilt_compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation" }
+# Lifecycle
+lifecycle-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifeCycleVersion" }
+# KHexGrid
+hexgrid = { group = "com.github.dmccabe", name = "khexgrid", version.ref = "khexgridVersion" }
+graphics-shapes-android = { group = "androidx.graphics", name = "graphics-shapes-android", version.ref = "graphicsShapesAndroid" }
+navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
