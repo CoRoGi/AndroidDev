@@ -28,7 +28,7 @@ class MainActivity: ComponentActivity() {
         // Hides the default action bar
         actionBar?.hide()
         setContent {
-            Counter()
+            BattleTileGrid()
         }
     }
 
