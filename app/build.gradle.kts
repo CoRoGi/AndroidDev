@@ -3,6 +3,7 @@ plugins {
   alias(libs.plugins.org.jetbrains.kotlin.android)
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.dagger.hilt.plugin)
+  alias(libs.plugins.kotlin.serialization.plugin)
   id("kotlin-kapt")
 }
 
@@ -79,8 +80,13 @@ dependencies {
   implementation(libs.lifecycle.compose)
   // Hexgrid
   implementation(libs.hexgrid)
+  implementation(libs.kotlin.serialization)
   // Testing
   androidTestImplementation(platform(libs.compose.bom))
+  val nav_version = "2.8.7"
+
+  // Jetpack Compose integration
+  implementation("androidx.navigation:navigation-compose:$nav_version")
 }
 
 // Allow references to generated code

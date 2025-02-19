@@ -18,8 +18,19 @@ kotlin = "2.0.0"
 # Min & Target SDK
 minSdk = "21"
 targetSdk = "33"
+# Retrofit
+retrofit_version = "2.11.0"
+# Retrofit Kotlin Serialization Converter
+retrofit_serialization_version = "1.0.0"
+# Kotlin Serialization
+serialization = "1.8.0"
+# OkHttp3
+okhttp3_version = "4.12.0"
+# HexGrid
 khexgridVersion = "0.1.0"
+# Android Graphics
 graphicsShapesAndroid = "1.0.1"
+# Navigation Common
 navigationCommonKtx = "2.8.4"
 
 [plugins]
@@ -32,6 +43,8 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 # Dagger Hilt
 dagger_hilt_plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+# Kotlin Serialization
+kotlin_serialization_plugin = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [libraries]
 # AndroidX Activity
@@ -57,7 +70,19 @@ dagger_hilt_compiler = { group = "com.google.dagger", name = "hilt-android-compi
 hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation" }
 # Lifecycle
 lifecycle-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifeCycleVersion" }
-# KHexGrid
+# Retrofit
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit_version" }
+# Retrofit Kotlin Serialization Converter
+retrofit_serialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofit_serialization_version" }
+# Kotlin Serialization
+kotlin_serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+# OkHttp3
+okhttp3_bom =  { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttp3_version" }
+okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp" }
+okhttp3_logging_interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor"}
+# HexGrid
 hexgrid = { group = "com.github.dmccabe", name = "khexgrid", version.ref = "khexgridVersion" }
+# Android Graphics
 graphics-shapes-android = { group = "androidx.graphics", name = "graphics-shapes-android", version.ref = "graphicsShapesAndroid" }
+# Navigation Common
 navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }

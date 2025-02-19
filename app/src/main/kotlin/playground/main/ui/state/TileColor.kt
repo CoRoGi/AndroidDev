@@ -14,7 +14,7 @@ sealed class TileColor{
     ): Primary()
 
     class Blue(
-        override val color: Color = Color.Blue
+        override val color: Color = Color.Cyan
     ): Primary()
 
     class Yellow(
@@ -54,7 +54,20 @@ sealed class TileColor{
         }
     }
 
-    fun switch(): TileColor {
+    fun previous(): TileColor {
+        return when (this) {
+            is TileColor.Red -> TileColor.Yellow()
+            is TileColor.Blue -> TileColor.Red()
+            is TileColor.Yellow -> TileColor.Blue()
+            is TileColor.Orange -> TileColor.Green()
+            is TileColor.Purple -> TileColor.Orange()
+            is TileColor.Green -> TileColor.Purple()
+            is TileColor.White -> TileColor.Red()
+            is TileColor.Black -> TileColor.Yellow()
+        }
+    }
+
+    fun promote(): TileColor {
         return when (this) {
             is TileColor.Red -> TileColor.Orange()
             is TileColor.Blue -> TileColor.Purple()
