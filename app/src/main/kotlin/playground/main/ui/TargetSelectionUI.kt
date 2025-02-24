@@ -50,7 +50,7 @@ fun TargetSelectionUI(
                 items(tiles.size) { item ->
                     Button(
                         onClick = {
-                            playerVmList[player - 1].addPendingAction(Pair(action, item))
+                            playerVmList[player - 1].addPendingAction(Pair(action, tiles[item]))
                             navController.popBackStack()
                         }
                     ) {

@@ -29,7 +29,7 @@ class MainActivity: ComponentActivity() {
         actionBar?.hide()
         setContent {
 //            TileGrid(width = 3, height = 3, missingTiles = arrayListOf(6, 8))
-            BattleScreen(maxWidth = 3, maxHeight = 3)
+            BattleScreen(maxWidth = 5, maxHeight = 5)
         }
     }
 

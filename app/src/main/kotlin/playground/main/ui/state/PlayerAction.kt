@@ -30,7 +30,7 @@ sealed interface PlayerAction {
     @SerialName("slash")
     data class Slash(
         override val name: String = "Slash",
-        override val cost: Int = 20,
+        override val cost: Int = 45,
         override val delay: Int = 2,
         override val effect: PlayerActionEffect = Next
     ) : AtbAction()
@@ -48,7 +48,7 @@ sealed interface PlayerAction {
     @SerialName("magic")
     data class Magic(
         override val name: String = "Magic",
-        override val cost: Int = 30,
+        override val cost: Int = 60,
         override val delay: Int = 3,
         override val effect: PlayerActionEffect = Promote
     ) : AtbAction()

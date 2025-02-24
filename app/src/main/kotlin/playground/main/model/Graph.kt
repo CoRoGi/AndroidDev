@@ -10,7 +10,7 @@ interface Graph<T> {
     fun addEdge(edgeType: EdgeType,
                 source: Vertex<T>,
                 destination: Vertex<T>,
-                weight: Double?)
+                weight: Double)
     {
         when (edgeType) {
             EdgeType.DIRECTED -> addDirectedEdge(source, destination, weight)
@@ -18,11 +18,11 @@ interface Graph<T> {
         }
     }
 
-    fun addDirectedEdge(source: Vertex<T>, destination: Vertex<T>, weight: Double?)
+    fun addDirectedEdge(source: Vertex<T>, destination: Vertex<T>, weight: Double)
 
     fun addUndirectedEdge(source: Vertex<T>,
                           destination: Vertex<T>,
-                          weight: Double?)
+                          weight: Double)
     {
         addDirectedEdge(source, destination, weight)
         addDirectedEdge(destination, source, weight)

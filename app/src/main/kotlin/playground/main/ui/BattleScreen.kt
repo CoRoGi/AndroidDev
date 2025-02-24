@@ -38,8 +38,9 @@ fun BattleScreen(
     val currentTurn by actionVM.currentTurn.collectAsStateWithLifecycle()
     val committedActions by actionVM.committedActions.collectAsStateWithLifecycle()
 
-//    gridViewModel.createBattleGrid(maxWidth, maxHeight, arrayListOf(0, 1, 3, 4, 20, 24))
-    gridViewModel.createBattleGrid(maxWidth, maxHeight, arrayListOf(6, 8))
+    gridViewModel.createBattleGrid(maxWidth, maxHeight, arrayListOf(0, 1, 3, 4, 20, 24))
+//    gridViewModel.createBattleGrid(maxWidth, maxHeight, arrayListOf())
+//    gridViewModel.createBattleGrid(maxWidth, maxHeight, arrayListOf(6, 8))
 
     val battleTileVMs = mutableListOf<TileViewModel>()
 

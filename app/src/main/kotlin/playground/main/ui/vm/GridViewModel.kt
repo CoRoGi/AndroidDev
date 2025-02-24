@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import playground.main.model.Graph
 import playground.main.ui.model.TileModel
 import javax.inject.Inject
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 @HiltViewModel
 class GridViewModel @Inject constructor(
@@ -38,8 +40,15 @@ class GridViewModel @Inject constructor(
         while (left <= tiles.value.size - 2) {
             var right = left + 1
             while (right <= tiles.value.size - 1) {
-                if (isNeighbor(tiles.value[left], tiles.value[right])) {
-                    graph.addUndirectedEdge(graph.vertices[tiles.value[left].index], graph.vertices[tiles.value[right].index], 1.0)
+//                if (isNeighbor(tiles.value[left], tiles.value[right])) {
+//                    graph.addUndirectedEdge(graph.vertices[tiles.value[left].index], graph.vertices[tiles.value[right].index], 1.0)
+//                }
+                var range = 1
+                val hypotenuse = sqrt((maxWidth * maxWidth + maxHeight * maxHeight).toDouble()).roundToInt()
+                for (radius in range..hypotenuse) {
+                    if (isWithinRange(tiles.value[left], tiles.value[right], radius)) {
+                        graph.addUndirectedEdge(graph.vertices[tiles.value[left].index], graph.vertices[tiles.value[right].index], radius.toDouble())
+                    }
                 }
                 right++
             }
@@ -69,4 +78,71 @@ class GridViewModel @Inject constructor(
         }
         return false
     }
+
+    fun isWithinRange(vertex1: TileModel, vertex2: TileModel, range: Int): Boolean {
+        val minIndex = minOf(vertex1.index, vertex2.index)
+        val maxIndex = maxOf(vertex1.index, vertex2.index)
+        val minTile = if (minIndex == vertex1.index) vertex1 else vertex2
+        val maxTile = if (maxIndex == vertex1.index) vertex1 else vertex2
+
+        if (minTile.index % 2 == 0 && minTile.row % 2 == 0) {
+            if (
+                (minTile.row == maxTile.row && Math.abs(minTile.index - maxTile.index) <= range) ||
+                (minTile.column == maxTile.column && Math.abs(minTile.row - maxTile.row) <= range) ||
+                (Math.abs(minTile.row - maxTile.row) <= range && Math.abs(minTile.column - maxTile.column) < range) ||
+                (Math.abs(minTile.row - maxTile.row) < range && Math.abs(minTile.column - maxTile.column) <= range) ||
+                isNeighbor(minTile, maxTile)
+            ) {
+                return true
+            }
+        } else if (minTile.index % 2 == 0) {
+            if (
+                (minTile.row == maxTile.row && Math.abs(minTile.index - maxTile.index) <= range) ||
+                (minTile.column == maxTile.column && Math.abs(minTile.row - maxTile.row) <= range) ||
+                (Math.abs(minTile.row - maxTile.row) < range && Math.abs(minTile.column - maxTile.column) <= range)
+            ) {
+                return true
+            }
+        } else if (minTile.row % 2 == 0) {
+            if (
+                (minTile.row == maxTile.row && Math.abs(minTile.index - maxTile.index) <= range) ||
+                (minTile.column == maxTile.column && Math.abs(minTile.row - maxTile.row) <= range) ||
+                (Math.abs(minTile.row - maxTile.row) < range && Math.abs(minTile.column - maxTile.column) <= range)
+            ) {
+                return true
+            }
+        } else {
+            if (
+                (minTile.row == maxTile.row && Math.abs(minTile.index - maxTile.index) <= range) ||
+                (minTile.column == maxTile.column && Math.abs(minTile.row - maxTile.row) <= range) ||
+                (Math.abs(minTile.row - maxTile.row) <= range && Math.abs(minTile.column - maxTile.column) < range) ||
+                (Math.abs(minTile.row - maxTile.row) < range && Math.abs(minTile.column - maxTile.column) <= range) ||
+                isNeighbor(minTile, maxTile)
+            ) {
+                return true
+            }
+        }
+        return false
+    }
+
+//    fun calculateDistances() {
+//        graph.vertices.forEach { vertex ->
+//            graph.vertices.forEach { otherVertex ->
+//                var weight = 1.0
+//                if (!isNeighbor(tiles.value[vertex.index], tiles.value[otherVertex.index])) {
+//                    weight++
+//                }
+//            }
+//        }
+//    }
+
+//    fun calculateDistances(): Map<Int, Map<Int, ArrayList<Int>>> {
+//        val map = mutableMapOf<Int, Map<Int, ArrayList<Int>>>()
+//        for (vertex in graph.vertices) {
+//            map.put(vertex.index, arrayListOf())
+//            val edges = graph.edges(vertex).filter { it.weight != null }
+//            val weights: List<Int> = edges.map { it.weight!!.toInt() }
+//            map[vertex.index]!!.addAll(weights)
+//        }
+//    }
 }

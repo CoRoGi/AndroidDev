@@ -21,8 +21,9 @@ class AdjacencyMatrix<T>: Graph<T> {
         return vertex
     }
 
-    override fun addDirectedEdge(source: Vertex<T>, destination: Vertex<T>, weight: Double?) {
-        weights[source.index][destination.index] = weight
+    override fun addDirectedEdge(source: Vertex<T>, destination: Vertex<T>, weight: Double) {
+        val currentWeight = weights[source.index][destination.index]
+        weights[source.index][destination.index] = if (currentWeight != null) minOf(currentWeight, weight) else weight
     }
 
     override fun edges(source: Vertex<T>): ArrayList<Edge<T>> {

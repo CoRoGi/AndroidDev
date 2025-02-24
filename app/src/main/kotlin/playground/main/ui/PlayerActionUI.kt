@@ -34,14 +34,14 @@ fun PlayerActionUI(
     val pendingActions by viewModel.uncommittedActions.collectAsStateWithLifecycle()
     val pendingAtbCost by remember {
         derivedStateOf {
-            pendingActions.filter { it is PlayerAction.AtbAction }.map { it.first.cost }.fold(0) {
+            pendingActions.filter { it.first is PlayerAction.AtbAction }.map { it.first.cost }.fold(0) {
                     acc, value -> acc + value
             }
         }
     }
     val pendingMoveCost by remember {
         derivedStateOf {
-            pendingActions.filter { it is PlayerAction.AtbAction }.map { it.first.cost }.fold(0) {
+            pendingActions.filter { it.first is PlayerAction.AtbAction }.map { it.first.cost }.fold(0) {
                     acc, value -> acc + value
             }
         }

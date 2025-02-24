@@ -29,7 +29,7 @@ import playground.main.ui.vm.ActionsViewModel
 import playground.main.ui.vm.TileViewModel
 import java.util.UUID
 
-private const val SCROLL_DX = 24f
+private const val SCROLL_DX = 36f
 private const val REQUIRED_CARD_COUNT = 10
 
 private class AutoScrollItem<T>(
@@ -94,9 +94,9 @@ fun <T : Any> AutoScrollingLazyRow(
                         } else {
                             currentActions[currentTurn]!!.forEach { action ->
                                 tileVMs[action.second].handleAction(action.first)
-                                delay(1000)
+                                delay(750)
                             }
-                            delay(3500)
+                            delay(2700)
                             actionViewModel.nextTurn()
                         }
                     }
