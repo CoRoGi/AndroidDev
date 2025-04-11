@@ -16,6 +16,8 @@ sealed interface PlayerAction {
     @SerialName("AtbAction")
     sealed class AtbAction : PlayerAction {
         abstract val effect: PlayerActionEffect
+        abstract val range: Int
+        abstract val areaOfEffect: EffectPattern
     }
 
     @Serializable
@@ -32,7 +34,9 @@ sealed interface PlayerAction {
         override val name: String = "Slash",
         override val cost: Int = 45,
         override val delay: Int = 2,
-        override val effect: PlayerActionEffect = Next
+        override val effect: PlayerActionEffect = Next,
+        override val range: Int = 1,
+        override val areaOfEffect: VLine = VLine(1)
     ) : AtbAction()
 
     @Serializable
@@ -41,7 +45,9 @@ sealed interface PlayerAction {
         override val name: String = "Wait",
         override val cost: Int = 50,
         override val delay: Int = 1,
-        override val effect: PlayerActionEffect = Previous
+        override val effect: PlayerActionEffect = Previous,
+        override val range: Int = 0,
+        override val areaOfEffect: Single = Single()
     ) : AtbAction()
 
     @Serializable
@@ -50,6 +56,8 @@ sealed interface PlayerAction {
         override val name: String = "Magic",
         override val cost: Int = 60,
         override val delay: Int = 3,
-        override val effect: PlayerActionEffect = Promote
+        override val effect: PlayerActionEffect = Promote,
+        override val range: Int = 2,
+        override val areaOfEffect: Single = Single()
     ) : AtbAction()
 }

@@ -15,9 +15,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -26,8 +28,10 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import playground.main.ui.model.TileModel
 import playground.main.ui.state.PlayerAction
-import playground.main.ui.vm.TileViewModel
+import playground.main.ui.state.TileUiState
+import playground.main.ui.vm.BattleViewModel
 import kotlin.reflect.typeOf
 
 @Serializable
@@ -50,11 +54,9 @@ fun PlayerTabs(
     tabs: List<String>,
     contentScreens: List<@Composable () -> Unit> = listOf(),
     playerActionContent: List<@Composable () -> Unit> = listOf(),
-    tiles: List<Int>,
-    vms: List<TileViewModel>,
     navController: NavHostController,
-    playerVMs: List<PlayerViewModel>,
-//    targetSelectionContent: List<@Composable () -> Unit> = listOf(),
+    tilePairs: SnapshotStateList<Pair<TileModel, TileUiState>>,
+    battleViewModel: BattleViewModel = hiltViewModel()
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
@@ -111,7 +113,6 @@ fun PlayerTabs(
                     }
                 ) {
                     Column {
-//                        content.getOrNull(index)
                         // Text displayed on the tab
                         Text(text = tabTitle)
                         contentScreens.getOrNull(index)?.invoke()
@@ -124,31 +125,6 @@ fun PlayerTabs(
             navController = navController,
             startDestination = Player1
         ) {
-
-//            when (selectedTabIndex) {
-//                0 -> {
-//                    navController.navigate(Player1)
-//                }
-//
-//                1 -> {
-//                    navController.navigate(Player2)
-//                }
-//            }
-//            composable<PlayerActions> {
-//                // Display the content screen corresponding to the selected tab
-//                Box(modifier = Modifier.fillMaxHeight(0.9f)) {
-//                    playerActionContent.getOrNull(selectedTabIndex)?.invoke()
-//                }
-//            }
-//            composable<Target>(
-//                typeMap = mapOf(typeOf<PlayerAction>() to ActionParameter)
-//            ) {
-//                val args = it.toRoute<Target>()
-//                Box(modifier = Modifier.fillMaxHeight(0.9f)) {
-////                    targetSelectionContent.getOrNull(selectedTabIndex)?.invoke()
-//                    TargetSelectionUI(tiles, vms, playerVmList = playerVMs, action = args.action, player = selectedTabIndex + 1)
-//                }
-//            }
             navigation<Player1>(
                 startDestination = PlayerActions
             ) {
@@ -163,14 +139,13 @@ fun PlayerTabs(
                 ) {
                     val args = it.toRoute<Target>()
                     Box(modifier = Modifier.fillMaxHeight(0.9f)) {
-//                    targetSelectionContent.getOrNull(selectedTabIndex)?.invoke()
                         TargetSelectionUI(
-                            tiles,
-                            vms,
-                            playerVmList = playerVMs,
+                            tilePairs.filter { tilePair -> tilePair.first.show }
+                                .map { shownTile -> shownTile.first },
                             action = args.action,
                             player = 1,
-                            navController = navController
+                            navController = navController,
+                            battleViewModel
                         )
                     }
                 }
@@ -190,14 +165,17 @@ fun PlayerTabs(
                 ) {
                     val args = it.toRoute<Target>()
                     Box(modifier = Modifier.fillMaxHeight(0.9f)) {
-//                    targetSelectionContent.getOrNull(selectedTabIndex)?.invoke()
                         TargetSelectionUI(
-                            tiles,
-                            vms,
-                            playerVmList = playerVMs,
+                            tilePairs
+                                .filter { tilePair ->
+                                    tilePair.first.show
+                                }.map { shownTile ->
+                                    shownTile.first
+                                },
                             action = args.action,
                             player = 2,
-                            navController = navController
+                            navController = navController,
+                            battleViewModel = battleViewModel
                         )
                     }
                 }

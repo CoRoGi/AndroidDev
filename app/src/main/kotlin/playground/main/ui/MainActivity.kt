@@ -14,9 +14,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.AndroidEntryPoint
+import playground.main.ui.vm.BattleViewModel
 import playground.main.ui.vm.CountViewModel
 
 @AndroidEntryPoint
@@ -29,7 +31,8 @@ class MainActivity: ComponentActivity() {
         actionBar?.hide()
         setContent {
 //            TileGrid(width = 3, height = 3, missingTiles = arrayListOf(6, 8))
-            BattleScreen(maxWidth = 5, maxHeight = 5)
+//            BattleScreen(maxWidth = 5, maxHeight = 5)
+            DemoScreen(maxWidth = 5, maxHeight = 5)
         }
     }
 
@@ -53,4 +56,14 @@ fun Counter(viewModel: CountViewModel = viewModel(), modifier: Modifier = Modifi
             onClick = { viewModel.incrementCount() }
         )
     }
+}
+
+@Composable
+fun DemoScreen(
+    maxWidth: Int,
+    maxHeight: Int,
+    battleViewModel: BattleViewModel = hiltViewModel()
+) {
+    battleViewModel.createBattleGrid(maxWidth, maxHeight, arrayListOf(0,1,3,4,20, 24), arrayListOf(15, 23))
+    BattleScreen(maxWidth = maxWidth, maxHeight = maxHeight, battleViewModel = battleViewModel)
 }

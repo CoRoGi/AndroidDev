@@ -11,35 +11,41 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import playground.main.ui.model.TileModel
 import playground.main.ui.state.PlayerAction
-import playground.main.ui.vm.TileViewModel
+import playground.main.ui.vm.BattleViewModel
 
 @Composable
 fun TargetSelectionUI(
-    tiles: List<Int>,
-    vms: List<TileViewModel>,
-    playerVM: PlayerViewModel = hiltViewModel(),
-    playerVmList: List<PlayerViewModel> = listOf(),
+    tiles: List<TileModel>,
     action: PlayerAction,
     player: Int,
-    navController: NavHostController
+    navController: NavHostController,
+    battleViewModel: BattleViewModel = hiltViewModel()
 ) {
-    val currentPlayer by remember { mutableStateOf(1) }
-    val currentVMIndex by remember { mutableStateOf(0) }
-
-    val uncommittedActions = playerVmList[player - 1].uncommittedActions.collectAsStateWithLifecycle()
+    val screen = when (player) {
+        1 -> Player1
+        else -> Player2
+    }
 
     Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
         Box(modifier = Modifier.fillMaxHeight(0.9f)) {
+            val currentTile = tiles.find { it.index == battleViewModel.playerStates.value[player -1].currentTile }!!
+            if (action is PlayerAction.AtbAction && action.range == 0) {
+                Button(
+                    onClick = {
+                        battleViewModel.addPendingAction(player, Triple(action, currentTile.index, currentTile.index))
+                        navController.navigate(screen)
+                    }
+                ) {
+                    Text("Tile number ${currentTile.index}")
+                }
+            } else
             LazyHorizontalStaggeredGrid(
                 modifier = Modifier.padding(10.dp),
                 rows = StaggeredGridCells.Adaptive(30.dp),
@@ -48,23 +54,39 @@ fun TargetSelectionUI(
 
             ) {
                 items(tiles.size) { item ->
-                    Button(
-                        onClick = {
-                            playerVmList[player - 1].addPendingAction(Pair(action, tiles[item]))
-                            navController.popBackStack()
+                    when (action) {
+                        is PlayerAction.AtbAction -> {
+                            if (battleViewModel.isWithinRange(tiles.find { it.index == battleViewModel.playerStates.value[player -1].currentTile }!!, tiles[item], action.range) &&
+                                tiles[item].index != battleViewModel.playerStates.value[player - 1].currentTile
+                                ) {
+                                Button(
+                                    onClick = {
+                                        battleViewModel.addPendingAction(player, Triple(action, tiles[item].index, currentTile.index))
+                                        navController.navigate(screen)
+                                    }
+                                ) {
+                                    Text("Tile number ${tiles[item].index}")
+                                }
+                            }
                         }
-                    ) {
-                        Text("Tile number ${tiles[item]}")
+                        else -> {
+                            Button(
+                                onClick = {
+                                    battleViewModel.addPendingAction(player, Triple(action, tiles[item].index, currentTile.index))
+                                    navController.navigate(screen)
+                                }
+                            ) {
+                                Text("Tile number ${tiles[item].index}")
+                            }
+                        }
+                        }
                     }
                 }
             }
-        }
         Button(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = {
-//                playerVmList[player - 1].addPendingAction(action)
-//                println("Player number $player, action added is ${action.name}")
-                navController.popBackStack()
+                navController.navigate(screen)
             }) {
             Text("Cancel")
         }

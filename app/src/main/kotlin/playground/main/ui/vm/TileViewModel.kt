@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import playground.main.ui.state.CharacterType
 import playground.main.ui.state.Demote
 import playground.main.ui.state.Next
 import playground.main.ui.state.PlayerAction
@@ -62,6 +63,12 @@ class TileViewModel @Inject constructor(): ViewModel() {
                     updateTile(effect = action.effect)
                 }
             is PlayerAction.MoveAction -> {}
+        }
+    }
+
+    fun setPlayer() {
+        _uiState.update {
+            it.copy(character = CharacterType.PLAYER)
         }
     }
 }

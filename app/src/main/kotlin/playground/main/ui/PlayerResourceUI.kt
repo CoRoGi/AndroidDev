@@ -13,16 +13,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import playground.main.ui.vm.BattleViewModel
 
 @Composable
-fun PlayerResourceUI(playerViewModel: PlayerViewModel) {
-    val playerState by playerViewModel.playerState.collectAsStateWithLifecycle()
-    val atbState by playerViewModel.atbState.collectAsStateWithLifecycle()
-    val moveState by playerViewModel.moveState.collectAsStateWithLifecycle()
+fun PlayerResourceUI(player: Int, battleViewModel: BattleViewModel = hiltViewModel()) {
+    val battlePlayerStates by battleViewModel.playerStates.collectAsStateWithLifecycle()
+    val battleAtbStates by battleViewModel.atbStates.collectAsStateWithLifecycle()
+    val battleMoveStates by battleViewModel.moveStates.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        playerViewModel.beginIncrement()
+//        playerViewModel.beginIncrement()
+        battleViewModel.beginIncrement()
     }
 
     Box(
@@ -33,7 +36,8 @@ fun PlayerResourceUI(playerViewModel: PlayerViewModel) {
         ) {
             LinearProgressIndicator(
                 progress = {
-                    atbState / 100f
+//                    atbState / 100f
+                    battleAtbStates[player - 1] / 100f
                 },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp).fillMaxWidth(),
                 color = Color.Blue,
@@ -41,7 +45,8 @@ fun PlayerResourceUI(playerViewModel: PlayerViewModel) {
             )
             LinearProgressIndicator(
                 progress = {
-                    moveState / 100f
+//                    moveState / 100f
+                    battleMoveStates[player - 1] / 100f
                 },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp).fillMaxWidth(),
                 color = Color.Blue,
@@ -49,7 +54,8 @@ fun PlayerResourceUI(playerViewModel: PlayerViewModel) {
             )
             LinearProgressIndicator(
                 progress = {
-                    playerState.currentHP / 100f
+//                    playerState.currentHP / 100f
+                    battlePlayerStates[player - 1].currentHP / 100f
                 },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp).fillMaxWidth(),
                 color = Color.Blue,

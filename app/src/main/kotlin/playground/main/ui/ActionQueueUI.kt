@@ -25,8 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import playground.main.ui.vm.ActionsViewModel
-import playground.main.ui.vm.TileViewModel
+import playground.main.ui.vm.BattleViewModel
 import java.util.UUID
 
 private const val SCROLL_DX = 36f
@@ -41,8 +40,7 @@ private class AutoScrollItem<T>(
 fun <T : Any> AutoScrollingLazyRow(
     list: List<T>,
     modifier: Modifier = Modifier,
-    actionViewModel: ActionsViewModel = hiltViewModel(),
-    tileVMs: List<TileViewModel> = hiltViewModel(),
+    battleViewModel: BattleViewModel = hiltViewModel(),
     itemContent: @Composable (item: T) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
@@ -50,9 +48,9 @@ fun <T : Any> AutoScrollingLazyRow(
 
     var items by remember { mutableStateOf(list.mapAutoScrollItem()) }
 
-    val currentActions by actionViewModel.committedActions.collectAsStateWithLifecycle()
+    val battleCurrentActions by battleViewModel.actionsQueue.collectAsStateWithLifecycle()
 
-    val currentTurn by actionViewModel.currentTurn.collectAsStateWithLifecycle()
+    val battleCurrentTurn by battleViewModel.currentTurn.collectAsStateWithLifecycle()
 
     var count by remember { mutableStateOf(0) }
 
@@ -87,24 +85,20 @@ fun <T : Any> AutoScrollingLazyRow(
                 snapshotFlow {
                     listState.firstVisibleItemIndex
                 }.collect {
-                    println("firstVisibleItemIndexChanged: ${currentTurn} ${listState.firstVisibleItemScrollOffset}")
-                    if (currentTurn <= 5) {
+                    if (battleCurrentTurn <= 5) {
                         if (count < 5) {
                             count++
                         } else {
-                            currentActions[currentTurn]!!.forEach { action ->
-                                tileVMs[action.second].handleAction(action.first)
+                            battleCurrentActions[battleCurrentTurn]!!.forEach { action ->
+                                battleViewModel.handleAction(action.targetTile, action)
                                 delay(750)
                             }
                             delay(2700)
-                            actionViewModel.nextTurn()
+                            battleViewModel.nextTurn()
                         }
                     }
                 }
 
-//                currentActions.value[1]!!.forEach { action ->
-//                    println(action)
-//                }
             }
 
             if (index == items.lastIndex) {
@@ -121,15 +115,9 @@ fun <T : Any> AutoScrollingLazyRow(
                             maxOf(0, lazyListState.firstVisibleItemScrollOffset - SCROLL_DX.toInt())
                         )
                     }
-//                    println("Scrolled and current Turn is ${currentTurn.value}")
-//                    if (currentTurn.value <= 5) {
-//                        actionViewModel.nextTurn()
-//                    }
-//                    println("next Turn")
-//                    actionViewModel.nextTurn()
                 }
 
-                println("updated items list on turn ${currentTurn}")
+                println("updated items list on turn ${battleCurrentTurn}, size is ${items.size}")
 //                items = (firstPart + secondPart)
                 items += items
             }

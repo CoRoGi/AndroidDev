@@ -1,4 +1,4 @@
-package playground.main.ui
+package playground.main.ui.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor() : ViewModel() {
-    private val _playerState = MutableStateFlow<PlayerState>(PlayerState())
+    private val _playerState = MutableStateFlow<PlayerState>(PlayerState(0))
     val playerState = _playerState.asStateFlow()
 
     private val _atbState = MutableStateFlow<Int>(0)
@@ -84,12 +84,24 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
 //            }
             _uncommittedActions.value.forEach { action ->
                 when (action.first) {
-                    is PlayerAction.MoveAction -> subtractMove(action.first.cost)
+                    is PlayerAction.MoveAction -> {
+                        subtractMove(action.first.cost)
+                    }
                     is PlayerAction.AtbAction -> subtractATB(action.first.cost)
                 }
             }
             _uncommittedActions.update {
                 it.drop(_uncommittedActions.value.size)
+            }
+        }
+    }
+
+    fun setTile(tileNumber: Int) {
+        viewModelScope.launch {
+            _playerState.update {
+                it.copy(
+                    currentTile = tileNumber
+                )
             }
         }
     }

@@ -21,36 +21,38 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import playground.main.ui.state.PlayerAction
-import playground.main.ui.vm.ActionsViewModel
+import playground.main.ui.vm.BattleViewModel
 
 @Composable
 fun PlayerActionUI(
     playerNumber: Int,
-    viewModel: PlayerViewModel = hiltViewModel(),
     playerActions: List<PlayerAction>,
     navController: NavController,
-    actionViewModel: ActionsViewModel = hiltViewModel(),
+    battleViewModel: BattleViewModel = hiltViewModel()
 ) {
-    val pendingActions by viewModel.uncommittedActions.collectAsStateWithLifecycle()
-    val pendingAtbCost by remember {
+    val battlePendingActions by battleViewModel.uncommittedActions.collectAsStateWithLifecycle()
+    val battlePendingAtbCost by remember {
         derivedStateOf {
-            pendingActions.filter { it.first is PlayerAction.AtbAction }.map { it.first.cost }.fold(0) {
-                    acc, value -> acc + value
-            }
-        }
-    }
-    val pendingMoveCost by remember {
-        derivedStateOf {
-            pendingActions.filter { it.first is PlayerAction.AtbAction }.map { it.first.cost }.fold(0) {
-                    acc, value -> acc + value
+            battlePendingActions[playerNumber - 1].filter { it.first is PlayerAction.AtbAction }.map { it.first.cost }.fold(0) {
+                acc, value, -> acc + value
             }
         }
     }
 
-    val atbState by viewModel.atbState.collectAsStateWithLifecycle()
-    val moveState by viewModel.moveState.collectAsStateWithLifecycle()
+    val battlePendingMoveCost by remember {
+        derivedStateOf {
+            battlePendingActions[playerNumber - 1].filter { it.first is PlayerAction.MoveAction }
+                .map { it.first.cost }.fold(0) { acc, value, ->
+                acc + value
+            }
+        }
+    }
+
+    val atbStates by battleViewModel.atbStates.collectAsStateWithLifecycle()
+    val moveStates by battleViewModel.moveStates.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+        println("Player Action UI: ${battlePendingActions}")
         Box(modifier = Modifier.fillMaxHeight(0.9f)) {
             LazyHorizontalStaggeredGrid(
                 modifier = Modifier.padding(10.dp),
@@ -62,10 +64,10 @@ fun PlayerActionUI(
                 items(playerActions.size) { item ->
                     val enabled = when (playerActions[item]) {
                         is PlayerAction.AtbAction -> {
-                            playerActions[item].cost + pendingAtbCost <= viewModel.playerState.value.maxATB && atbState > 0
+                            playerActions[item].cost + battlePendingAtbCost <= battleViewModel.playerStates.value[playerNumber - 1].maxATB && atbStates[playerNumber - 1] > 0
                         }
                         is PlayerAction.MoveAction -> {
-                            playerActions[item].cost + pendingMoveCost <= viewModel.playerState.value.maxMove && moveState > 0
+                            playerActions[item].cost + battlePendingMoveCost <= battleViewModel.playerStates.value[playerNumber - 1].maxMove && moveStates[playerNumber - 1] > 0
                         }
                     }
                     Button(enabled = enabled, onClick = { navController.navigate(Target(playerActions[item], playerNumber )) }) {
@@ -74,11 +76,12 @@ fun PlayerActionUI(
                 }
             }
         }
+
         Button(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = {
-                viewModel.commitActions()
-                actionViewModel.addActions(pendingActions)
+                battleViewModel.addActions(playerNumber, battlePendingActions[playerNumber - 1])
+                battleViewModel.commitActions(playerNumber)
             }) {
             Text("Commit")
         }

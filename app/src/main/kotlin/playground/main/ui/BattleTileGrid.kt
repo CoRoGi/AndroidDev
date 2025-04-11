@@ -6,14 +6,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import playground.main.ui.model.TileModel
-import playground.main.ui.vm.GridViewModel
-import playground.main.ui.vm.TileViewModel
+import playground.main.ui.state.TileUiState
 
 @Composable
-fun TileGrid(viewModel: GridViewModel = hiltViewModel(), width: Int, height: Int, missingTiles: ArrayList<Int> = arrayListOf(), shownTiles: ArrayList<Int> = arrayListOf(), tiles: ArrayList<TileModel> = arrayListOf(), vms: List<TileViewModel>) {
+fun TileGrid(
+    width: Int,
+    height: Int,
+    tilePairs: SnapshotStateList<Pair<TileModel, TileUiState>>,
+    ) {
     // TODO: Add neighbor param to battle tile and get from viewModel's graph
     Column(
         modifier = Modifier.systemBarsPadding(),
@@ -24,17 +27,20 @@ fun TileGrid(viewModel: GridViewModel = hiltViewModel(), width: Int, height: Int
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 for (item in 0 until width) {
                     if (item % 2 == 0) {
-                        BattleTile(vms[count], index = count, offset = 50, show = tiles[count].show)
+                        BattleTile(
+                            index = count,
+                            offset = 50,
+                            show = tilePairs[count].first.show,
+                            tile = tilePairs[count].second,
+                        )
                     } else {
-                        BattleTile(vms[count], index = count, offset = 0, show = tiles[count].show)
+                        BattleTile(
+                            index = count,
+                            offset = 0,
+                            show = tilePairs[count].first.show,
+                            tile = tilePairs[count].second
+                        )
                     }
-//                    if (missingTiles.contains(count)) {
-//                        BattleTile(hiltViewModel<TileViewModel>(key = count.toString()), index = count, show = false)
-//                    } else if (item % 2 == 0) {
-//                        BattleTile(hiltViewModel<TileViewModel>(key = count.toString()), offset = 50, index = count)
-//                    } else {
-//                        BattleTile(hiltViewModel<TileViewModel>(key = count.toString()), index = count)
-//                    }
                     count++
                 }
             }
