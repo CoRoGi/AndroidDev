@@ -18,6 +18,7 @@ sealed interface PlayerAction {
         abstract val effect: PlayerActionEffect
         abstract val range: Int
         abstract val areaOfEffect: EffectPattern
+        abstract val elementalType: ElementalType
     }
 
     @Serializable
@@ -36,7 +37,8 @@ sealed interface PlayerAction {
         override val delay: Int = 2,
         override val effect: PlayerActionEffect = Next,
         override val range: Int = 1,
-        override val areaOfEffect: VLine = VLine(1)
+        override val areaOfEffect: VLine = VLine(1),
+        override val elementalType: ElementalType
     ) : AtbAction()
 
     @Serializable
@@ -47,7 +49,8 @@ sealed interface PlayerAction {
         override val delay: Int = 1,
         override val effect: PlayerActionEffect = Previous,
         override val range: Int = 0,
-        override val areaOfEffect: Single = Single()
+        override val areaOfEffect: Single = Single(),
+        override val elementalType: ElementalType
     ) : AtbAction()
 
     @Serializable
@@ -58,6 +61,7 @@ sealed interface PlayerAction {
         override val delay: Int = 3,
         override val effect: PlayerActionEffect = Promote,
         override val range: Int = 2,
-        override val areaOfEffect: Single = Single()
+        override val areaOfEffect: Single = Single(),
+        override val elementalType: ElementalType
     ) : AtbAction()
 }

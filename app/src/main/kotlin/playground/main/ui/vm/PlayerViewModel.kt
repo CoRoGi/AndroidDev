@@ -11,11 +11,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import playground.main.ui.state.PlayerAction
 import playground.main.ui.state.PlayerState
+import playground.main.ui.state.ElementalType
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor() : ViewModel() {
-    private val _playerState = MutableStateFlow<PlayerState>(PlayerState(0))
+    private val _playerState = MutableStateFlow<PlayerState>(PlayerState(0, primaryElementalType = ElementalType.GAS, secondaryElementalType = ElementalType.LIQUID))
     val playerState = _playerState.asStateFlow()
 
     private val _atbState = MutableStateFlow<Int>(0)

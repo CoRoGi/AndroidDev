@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import playground.main.ui.state.CommittedAction
+import playground.main.ui.state.ElementalType
 import playground.main.ui.state.PlayerAction
 import playground.main.ui.vm.BattleViewModel
 
@@ -49,9 +50,18 @@ fun BattleScreen(
 //        battleTileVMs[12].setPlayer()
 //        battleTileVMs[16].setPlayer()
 
-    val player1Actions = listOf(PlayerAction.Move(), PlayerAction.Wait(), PlayerAction.Magic())
+    val player1Actions = listOf(
+        PlayerAction.Move(),
+        PlayerAction.Wait(elementalType = ElementalType.GAS),
+        PlayerAction.Magic(elementalType = ElementalType.PLASMA)
+    )
     val player2Actions =
-        listOf(PlayerAction.Move(), PlayerAction.Slash(), PlayerAction.Wait(), PlayerAction.Magic())
+        listOf(
+            PlayerAction.Move(),
+            PlayerAction.Slash(elementalType = ElementalType.SOLID),
+            PlayerAction.Wait(elementalType = ElementalType.LIQUID),
+            PlayerAction.Magic(elementalType = ElementalType.GAS)
+        )
 
     val playerTabContents =
         listOf<@Composable () -> Unit>(

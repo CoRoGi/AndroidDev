@@ -17,15 +17,12 @@ import playground.main.ui.model.TileModel
 import playground.main.ui.state.CharacterType
 import playground.main.ui.state.Circle
 import playground.main.ui.state.CommittedAction
-import playground.main.ui.state.Demote
+import playground.main.ui.state.ElementalType
 import playground.main.ui.state.HLine
-import playground.main.ui.state.Next
 import playground.main.ui.state.PlayerAction
-import playground.main.ui.state.PlayerActionEffect
 import playground.main.ui.state.PlayerState
-import playground.main.ui.state.Previous
-import playground.main.ui.state.Promote
 import playground.main.ui.state.Single
+import playground.main.ui.state.TileColor
 import playground.main.ui.state.TileUiState
 import playground.main.ui.state.VLine
 import javax.inject.Inject
@@ -65,7 +62,22 @@ class BattleViewModel @Inject constructor(
     val currentTurn = _currentTurn.asStateFlow()
 
     // Player VM
-    private val _playerStates = MutableStateFlow(mutableStateListOf(PlayerState(1, currentTile = 15), PlayerState(2, currentTile = 23)))
+    private val _playerStates = MutableStateFlow(
+        mutableStateListOf(
+            PlayerState(
+                playerNumber = 1,
+                currentTile = 15,
+                primaryElementalType = ElementalType.PLASMA,
+                secondaryElementalType = ElementalType.GAS,
+            ),
+            PlayerState(
+                playerNumber = 2,
+                currentTile = 23,
+                primaryElementalType = ElementalType.SOLID,
+                secondaryElementalType = ElementalType.LIQUID
+            )
+        )
+    )
     val playerStates= _playerStates.asStateFlow()
 
     private val _atbStates = MutableStateFlow<MutableList<Int>>(mutableStateListOf(0, 0))
@@ -299,22 +311,24 @@ class BattleViewModel @Inject constructor(
         }
     }
 
-    private fun updateTilePair(index: Int, effect: PlayerActionEffect) {
+    private fun updateTilePair(index: Int, tileColor: TileColor) {
         _tilePairs.update {
-            when (effect) {
-                is Next -> {
-                    it.apply { this[index] = this[index].copy(second = this[index].second.copy(color = this[index].second.color.next()))  }
-                }
-                is Previous -> {
-                    it.apply { this[index] = this[index].copy(second = this[index].second.copy(color = this[index].second.color.previous()))  }
-                }
-                is Promote -> {
-                    it.apply { this[index] = this[index].copy(second = this[index].second.copy(color = this[index].second.color.promote()))  }
-                }
-                is Demote -> {
-                    it.apply { this[index] = this[index].copy(second = this[index].second.copy(color = this[index].second.color.promote()))  }
-                }
-            }
+//            when (tileColor) {
+//                is Next -> {
+//                    it.apply { this[index] = this[index].copy(second = this[index].second.copy(color = this[index].second.color.next()))  }
+//                }
+//                is Previous -> {
+//                    it.apply { this[index] = this[index].copy(second = this[index].second.copy(color = this[index].second.color.previous()))  }
+//                }
+//                is Promote -> {
+//                    it.apply { this[index] = this[index].copy(second = this[index].second.copy(color = this[index].second.color.promote()))  }
+//                }
+//                is Demote -> {
+//                    it.apply { this[index] = this[index].copy(second = this[index].second.copy(color = this[index].second.color.promote()))  }
+//                }
+//            }
+//            }
+            it.apply { this[index] = this[index].copy(second = this[index].second.copy(color = this[index].second.color.switch(tileColor)))  }
         }
     }
 
@@ -326,7 +340,14 @@ class BattleViewModel @Inject constructor(
                     val aoeTiles = mutableSetOf<TileModel>(targetTile)
                     val castTile = _tiles.value[action.castTile]
                     when (action.action.areaOfEffect) {
-                        is Circle -> {}
+                        is Circle -> {
+                            aoeTiles.remove(targetTile)
+                            _tiles.value.forEach { tile ->
+                                if (isWithinRange(_tiles.value[action.user.currentTile], tile, 1)) {
+                                    aoeTiles.add(tile)
+                                }
+                            }
+                        }
                         is HLine -> {
                             _tiles.value.forEach { tile ->
                                 if (isWithinRange(tile, _tiles.value[index], action.action.areaOfEffect.range)
@@ -400,7 +421,23 @@ class BattleViewModel @Inject constructor(
                         }
                     }
                     aoeTiles.forEach { tile ->
-                        updateTilePair(index = tile.index, effect = action.action.effect)
+//                        updateTilePair(index = tile.index, effect = action.action.effect)
+                    }
+                    if (action.action.elementalType == action.user.primaryElementalType) {
+                        aoeTiles.forEach { tile ->
+                            val types = _tilePairs.value[tile.index].second.color.elementalTypes
+                            if (types.containsAll(listOf(action.user.primaryElementalType, action.user.secondaryElementalType))) {
+
+                            } else if (types.contains(action.user.primaryElementalType)) {
+                                val changeTo = TileColor.matchType(setOf(action.user.primaryElementalType, action.user.secondaryElementalType))
+                                updateTilePair(tile.index, changeTo)
+                            } else if (types.contains(action.user.secondaryElementalType)) {
+                                val changeTo = TileColor.matchType(setOf(action.user.primaryElementalType, action.user.secondaryElementalType))
+                                updateTilePair(tile.index, changeTo)
+                            } else {
+
+                            }
+                        }
                     }
                 }
                 is PlayerAction.MoveAction -> {

@@ -21,3 +21,27 @@ data object Previous: PlayerActionEffect()
 @Serializable
 @SerialName("demote")
 data object Demote: PlayerActionEffect()
+
+@Serializable
+@SerialName("toSL")
+data object toSL: PlayerActionEffect()
+
+@Serializable
+@SerialName("toSG")
+data object toSG: PlayerActionEffect()
+
+@Serializable
+@SerialName("toSP")
+data object toSP: PlayerActionEffect()
+
+@Serializable
+@SerialName("toLG")
+data object toLG: PlayerActionEffect()
+
+@Serializable
+@SerialName("toLP")
+data object toLP: PlayerActionEffect()
+
+@Serializable
+@SerialName("toGP")
+data object toGP: PlayerActionEffect()
